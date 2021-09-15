@@ -3,18 +3,12 @@ using System.Collections.Generic;
 
 namespace HayDeStacker
 {
-    class Schedule
+    class ScheduleConfig
     {
         public TimeSpan StartTime { get; set; }
 
         public TimeSpan Duration { get; set; }
 
-        public List<Day> Days { get; set; }
-
-
-        public enum Day
-        {
-            Mo, Tu, We, Th, Fr, Sa, Su
-        }
+        public List<DayOfWeek> Days { get; set; }
     }
 }

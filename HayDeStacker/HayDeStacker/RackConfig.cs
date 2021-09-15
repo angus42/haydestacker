@@ -3,7 +3,7 @@ using YamlDotNet.Serialization;
 
 namespace HayDeStacker
 {
-    class Rack
+    class RackConfig
     {
         public string Name { get; set; }
 

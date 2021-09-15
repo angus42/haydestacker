@@ -4,8 +4,8 @@ namespace HayDeStacker
 {
     class Config
     {
-        public Dictionary<string, Rack> Racks { get; set; }
+        public Dictionary<string, RackConfig> Racks { get; set; }
 
-        public Dictionary<string, Schedule> Schedules { get; set; }
+        public Dictionary<string, ScheduleConfig> Schedules { get; set; }
     }
 }

@@ -18,18 +18,18 @@
 
 schedules:
   WinterWeekDay06m10:
-    startTime: 06:00
-    duration: 10:00
-    days: [Mo, Tu, We, Th, Fr]
+    startTime: 23:00:00
+    duration: 00:00:10
+    days: [Monday, Tuesday, Wednesday, Thursday, Friday]
   WinterWeekDay11m10:
     startTime: 11:00
     duration: 10:00
-    days: [Mo, Tu, We, Th, Fr]
+    days: [Monday, Tuesday, Wednesday, Thursday, Friday]
   WinterWeekDay17m10:
     startTime: 17:00
     duration: 10:00
-    days: [Mo, Tu, We, Th, Fr]
+    days: [Monday, Tuesday, Wednesday, Thursday, Friday]
   WinterWeekEnd18m10:
     startTime: 06:00
     duration: 18:00
-    days: [Sa, Su]
+    days: [Saturday, Sunday]
