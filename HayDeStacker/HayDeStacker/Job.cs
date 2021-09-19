@@ -1,20 +1,37 @@
-﻿using Quartz;
+﻿using MQTTnet;
+using MQTTnet.Client;
+using Quartz;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HayDeStacker
 {
-    class Job : IJob
+    abstract class Job : IJob
     {
         public async Task Execute(IJobExecutionContext context)
         {
-            await Console.Out.WriteLineAsync($"{GetType().Name} {context.JobDetail.Key} @ {MQTT}.");
+            string mqttTopic = context.JobDetail.JobDataMap.GetString("MqttTopic");
+            await Console.Out.WriteLineAsync($"{GetType().Name} {context.JobDetail.Key} @ {mqttTopic}.");
+            var message = new MqttApplicationMessageBuilder()
+                .WithTopic(mqttTopic)
+                .WithPayload(MqttPayload)
+                .Build();
+            await MqttClient.PublishAsync(message, CancellationToken.None);
         }
 
-        internal string MQTT { get; set; }
+        internal IMqttClient MqttClient { get; set; } 
+
+        protected abstract string MqttPayload { get; }
     }
 
-    class OpenJob : Job { }
+    class OpenJob : Job
+    {
+        protected override string MqttPayload => "ON";
+    }
 
-    class CloseJob : Job { }
+    class CloseJob : Job
+    {
+        protected override string MqttPayload => "OFF";
+    }
 }
