@@ -56,35 +56,43 @@ namespace HayDeStacker
                 var openJob = JobBuilder.Create<OpenJob>()
                     .WithIdentity(kv.Key, "Open")
                     .UsingJobData("MqttTopic", kv.Value.ShutterTopic)
+                    .StoreDurably()
                     .Build();
+                scheduler.AddJob(openJob, true);
                 var closeJob = JobBuilder.Create<CloseJob>()
                     .WithIdentity(kv.Key, "Close")
                     .UsingJobData("MqttTopic", kv.Value.ShutterTopic)
+                    .StoreDurably()
                     .Build();
+                scheduler.AddJob(closeJob, true);
 
                 foreach (var scheduleKey in kv.Value.ScheduleKeys)
                 {
                     var schedule = config.Schedules[scheduleKey];
                     var trigger = TriggerBuilder.Create()
-                        .WithIdentity(kv.Key, "Open")
+                        .WithIdentity(kv.Key + '@' + scheduleKey, "Open")
                         .StartNow()
                         .WithDailyTimeIntervalSchedule(x => x
                             .OnDaysOfTheWeek(schedule.Days)
                             .StartingDailyAt(new TimeOfDay(schedule.StartTime.Hours, schedule.StartTime.Minutes, schedule.StartTime.Seconds))
-                            .WithRepeatCount(0))
+                            .EndingDailyAfterCount(1)
+                            .WithMisfireHandlingInstructionDoNothing())
+                        .ForJob(openJob)
                         .Build();
-                    scheduler.ScheduleJob(openJob, trigger);
+                    scheduler.ScheduleJob(trigger);
 
                     var endTime = schedule.StartTime + schedule.Duration;
                     trigger = TriggerBuilder.Create()
-                        .WithIdentity(kv.Key, "Close")
+                        .WithIdentity(kv.Key + '@' + scheduleKey, "Close")
                         .StartNow()
                         .WithDailyTimeIntervalSchedule(x => x
                             .OnDaysOfTheWeek(schedule.Days)
                             .StartingDailyAt(new TimeOfDay(endTime.Hours, endTime.Minutes, endTime.Seconds))
-                            .WithRepeatCount(0))
+                            .EndingDailyAfterCount(1)
+                            .WithMisfireHandlingInstructionDoNothing())
+                        .ForJob(closeJob)
                         .Build();
-                    scheduler.ScheduleJob(closeJob, trigger);
+                    scheduler.ScheduleJob(trigger);
                 }
             }
 

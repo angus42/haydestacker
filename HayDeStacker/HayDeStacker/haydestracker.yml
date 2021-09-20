@@ -3,17 +3,18 @@
     name: Tick, Trick, Track
     shutterTopic: /racks/1/shutter
     schedules:
-#      - WinterWeekDay06m10
-#      - WinterWeekDay17m10
-#      - WinterWeekEnd18m10
+      - WinterWeekDay06m10
+      - WinterWeekDay17m10
+      - WinterWeekEnd18m10
       - Test
-#  Rack2:
-#    name: Tinky Winky, Dipsy, Laa-Laa, Po
-#    shutterTopic: /racks/2/shutter
-#    schedules:
-#      - WinterWeekDay06m10
-#      - WinterWeekDay17m10
-#      - WinterWeekEnd18m10
+  Rack2:
+    name: Tinky Winky, Dipsy, Laa-Laa, Po
+    shutterTopic: /racks/2/shutter
+    schedules:
+      - WinterWeekDay06m10
+      - WinterWeekDay17m10
+      - WinterWeekEnd18m10
+      - Test
 
 schedules:
   WinterWeekDay06m10:
@@ -29,6 +30,6 @@ schedules:
     duration: 00:18:00
     days: [Saturday, Sunday]
   Test:
-    startTime: 21:20:00
+    startTime: 23:27:00
     duration: 00:00:10
-    days: [Saturday, Sunday]
+    days: [Monday]
