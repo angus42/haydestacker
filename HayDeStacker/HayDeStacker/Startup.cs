@@ -1,4 +1,8 @@
-﻿using MQTTnet;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
@@ -18,9 +22,14 @@ namespace HayDeStacker
         private readonly IMqttClient MqttClient;
         private readonly IMqttClientOptions MqttClientOptions;
         private readonly IScheduler Scheduler;
+        private Config Config;
 
-        public Startup()
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
         {
+            Configuration = configuration;
+
             MqttClient = new MqttFactory().CreateMqttClient()
                 .UseDisconnectedHandler(MqttClientDisconnected);
             MqttClientOptions = new MqttClientOptionsBuilder()
@@ -37,19 +46,46 @@ namespace HayDeStacker
             ReadConfig();
         }
 
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton(Config);
+
+            services.AddSwaggerDocument(settings =>
+            {
+                settings.Title = "HayDeStacker API";
+                settings.Description = "Control settings and operations of your automated hay racks.";
+            });
+
+            services.AddMvc(options =>
+            {
+                options.EnableEndpointRouting = false;
+            });
+        }
+
+        public void Configure(IApplicationBuilder app)
+        {
+            app.UseStaticFiles();
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
+
+            app.UseMvc();
+        }
+
         private void ReadConfig()
         {
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
             var input = File.ReadAllText("haydestracker.yml");
-            var config = deserializer.Deserialize<Config>(input); foreach (var kv in config.Racks)
+            Config = deserializer.Deserialize<Config>(input);
+            foreach (var kv in Config.Racks)
             {
                 var rack = new Rack(kv.Key, kv.Value, Scheduler);
 
                 foreach (var scheduleKey in kv.Value.ScheduleKeys)
                 {
-                    var scheduleConfig = config.Schedules[scheduleKey];
+                    var scheduleConfig = Config.Schedules[scheduleKey];
                     rack.AddTrigger(scheduleKey, scheduleConfig);
                 }
             }

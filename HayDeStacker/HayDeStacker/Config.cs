@@ -2,7 +2,7 @@
 
 namespace HayDeStacker
 {
-    class Config
+    public class Config
     {
         public Dictionary<string, RackConfig> Racks { get; set; }
 

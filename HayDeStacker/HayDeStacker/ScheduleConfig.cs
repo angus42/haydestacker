@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HayDeStacker
 {
-    class ScheduleConfig
+    public class ScheduleConfig
     {
         public TimeSpan StartTime { get; set; }
 

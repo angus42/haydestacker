@@ -30,15 +30,15 @@ namespace HayDeStacker
         public void AddTrigger(string key, ScheduleConfig config)
         {
             var trigger = TriggerBuilder.Create()
-                        .WithIdentity(Key + '@' + key, "Open")
-                        .StartNow()
-                        .WithDailyTimeIntervalSchedule(x => x
-                            .OnDaysOfTheWeek(config.Days)
-                            .StartingDailyAt(new TimeOfDay(config.StartTime.Hours, config.StartTime.Minutes, config.StartTime.Seconds))
-                            .EndingDailyAfterCount(1)
-                            .WithMisfireHandlingInstructionDoNothing())
-                        .ForJob(OpenJob)
-                        .Build();
+                .WithIdentity(Key + '@' + key, "Open")
+                .StartNow()
+                .WithDailyTimeIntervalSchedule(x => x
+                    .OnDaysOfTheWeek(config.Days)
+                    .StartingDailyAt(new TimeOfDay(config.StartTime.Hours, config.StartTime.Minutes, config.StartTime.Seconds))
+                    .EndingDailyAfterCount(1)
+                    .WithMisfireHandlingInstructionDoNothing())
+                .ForJob(OpenJob)
+                .Build();
             Scheduler.ScheduleJob(trigger);
 
             var endTime = config.StartTime + config.Duration;

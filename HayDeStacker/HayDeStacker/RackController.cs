@@ -1,11 +1,18 @@
-﻿namespace HayDeStacker
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+
+namespace HayDeStacker
 {
-    public class RackController // : ApiController
+    [Produces("application/json")]
+    [Route("api/racks")]
+    [ApiController]
+    public class RackController : Controller
     {
-        // [HttpGet]
-        public string Search(string query)
-        {
-            return query;
-        }
+        private readonly Config Config;
+
+        public RackController(Config config) => Config = config;
+
+        [HttpGet]
+        public ActionResult<IDictionary<string, RackConfig>> GetAll() => Config.Racks;
     }
 }
